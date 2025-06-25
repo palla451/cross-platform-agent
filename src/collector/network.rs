@@ -1,7 +1,8 @@
 use std::process::Command;
 use std::str;
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ConnectionInfo {
     pub protocol: String,
     pub local_address: String,

@@ -3,9 +3,10 @@ use uuid::Uuid;
 use std::fs;
 use std::path::PathBuf;
 use get_if_addrs::get_if_addrs;
+use serde::{Serialize, Deserialize};
 
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SystemInfo {
     pub uuid: String,
     pub hostname: Option<String>,

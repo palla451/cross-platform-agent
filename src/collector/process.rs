@@ -1,8 +1,9 @@
 use sysinfo::{
     ProcessExt, ProcessRefreshKind, RefreshKind, System, SystemExt, PidExt,
 };
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ProcessInfo {
     pub pid: i32,
     pub name: String,
