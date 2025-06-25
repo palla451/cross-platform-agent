@@ -2,7 +2,8 @@ use sysinfo::{CpuExt, System, SystemExt};
 use uuid::Uuid;
 use std::fs;
 use std::path::PathBuf;
-use local_ip_address::local_ip;
+use get_if_addrs::get_if_addrs;
+
 
 #[derive(Debug)]
 pub struct SystemInfo {
@@ -31,7 +32,17 @@ pub fn collect_system_info() -> SystemInfo {
 
     let uuid = load_or_generate_uuid();
 
-    let ip_address = local_ip().ok().map(|ip| ip.to_string()); // 🆕 logica IP
+    let ip_address = get_if_addrs()
+    .ok()
+    .and_then(|interfaces| {
+        interfaces
+            .into_iter()
+            .find(|iface| {
+                iface.ip().is_ipv4() && !iface.is_loopback() // evita 127.0.0.1
+            })
+            .map(|iface| iface.ip().to_string())
+    });
+// 🆕 logica IP
 
     SystemInfo {
         uuid,

@@ -13,6 +13,7 @@ fn main() {
     println!("OS: {}", sysinfo.os_version.as_deref().unwrap_or("N/A"));
     println!("CPU: {} × {}", sysinfo.cpu_brand, sysinfo.cpu_cores);
     println!("Architettura: {}", sysinfo.architecture);
+    println!("IP address: {}", sysinfo.ip_address.as_deref().unwrap_or("N/A"));
     println!("RAM: {} MB / {} MB", sysinfo.used_memory / 1024, sysinfo.total_memory / 1024);
 
 
