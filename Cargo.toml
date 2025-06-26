@@ -13,6 +13,10 @@ dirs = "5"
 get_if_addrs = "0.5"
 reqwest = { version = "0.11", features = ["blocking", "json", "native-tls"] }
 chrono = { version = "0.4", features = ["serde"] }
+redis = "0.24"  #
+sha2 = "0.10"
+md5 = "0.7"
+
 
 
 

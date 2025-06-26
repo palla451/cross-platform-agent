@@ -45,13 +45,19 @@ pub fn has_payload_changed(payload: &Payload) -> bool {
     }
 }
 
-/// Confronta due payload e verifica se ci sono nuovi PID o nuove connessioni
+/// Confronta due payload e verifica se ci sono nuovi (pid, name) o nuove connessioni
 fn has_diff(old: &Payload, new: &Payload) -> bool {
-    let old_pids: std::collections::HashSet<_> = old.processes.iter().map(|p| p.pid).collect();
-    let new_pids: std::collections::HashSet<_> = new.processes.iter().map(|p| p.pid).collect();
+    let old_pids: std::collections::HashSet<_> = old.processes
+        .iter()
+        .map(|p| (p.pid, p.name.clone()))
+        .collect();
+    let new_pids: std::collections::HashSet<_> = new.processes
+        .iter()
+        .map(|p| (p.pid, p.name.clone()))
+        .collect();
 
     if !new_pids.is_subset(&old_pids) {
-        println!("🧠 Nuovi PID trovati.");
+        println!("🧠 Nuovi processi (PID + nome) trovati.");
         return true;
     }
 

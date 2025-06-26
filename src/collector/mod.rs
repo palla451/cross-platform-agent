@@ -4,8 +4,4 @@ pub mod process;
 pub mod payload;
 pub mod snapshot;
 pub mod buffer;
-pub mod http;
-
-
-
-
+pub mod redis_sender;
