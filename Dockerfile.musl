@@ -1,0 +1,17 @@
+FROM clux/muslrust:stable AS builder
+
+WORKDIR /app
+COPY . .
+
+# Build binario statico musl
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+FROM alpine:latest
+
+WORKDIR /build
+
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/agent-client /usr/local/bin/agent-test
+COPY --from=builder /app/icons/icon-cyber-green.png /usr/local/bin/icon-cyber-green.png
+COPY --from=builder /app/icons/icon-cyber-red.png /usr/local/bin/icon-cyber-red.png
+
+ENTRYPOINT ["/usr/local/bin/agent-test"]

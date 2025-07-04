@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: agent-test
+    container_name: agent-client
     env_file:
       - .env
     depends_on:

@@ -1,0 +1,10 @@
+[Unit]
+Description=Agent backend (raccolta dati)
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/agent-client
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

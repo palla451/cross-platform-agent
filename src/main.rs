@@ -12,7 +12,9 @@ use serde_json;
 use dotenv::from_path;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    from_path("/app/.env").ok();
+//     from_path("/app/.env").ok();
+    from_path("/etc/agent/.env").ok();
+
 
     println!(" URL_BACKEND={}", std::env::var("URL_BACKEND").unwrap_or("N/A".into()));
     println!(" BEARER_TOKEN={}", std::env::var("BEARER_TOKEN").unwrap_or("N/A".into()));

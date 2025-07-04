@@ -1,0 +1,11 @@
+[Unit]
+Description=Agent tray icon
+After=graphical.target
+
+[Service]
+ExecStart=/usr/local/bin/agent-tray
+Restart=always
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=default.target

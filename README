@@ -1,0 +1,5 @@
+# 1 step
+./build-tray-icon.sh
+
+# 2 step
+./build-in-docker.sh

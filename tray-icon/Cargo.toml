@@ -1,0 +1,13 @@
+[package]
+name = "tray-icon"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gtk = "0.18"
+glib = "0.18"
+appindicator3 = "0.3"
+
+[[bin]]
+name = "agent-tray"
+path = "src/main.rs"
