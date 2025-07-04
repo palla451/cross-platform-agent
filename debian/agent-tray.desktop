@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/local/bin/agent-tray
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Agent Tray
+Comment=Tray icon dell’agente di sicurezza
+

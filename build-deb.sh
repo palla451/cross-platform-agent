@@ -13,27 +13,20 @@ echo "📁 Creo struttura pacchetto..."
 mkdir -p "$BUILD_DIR/DEBIAN"
 mkdir -p "$BUILD_DIR/usr/local/bin"
 mkdir -p "$BUILD_DIR/usr/share/icons/hicolor/48x48/apps"
+mkdir -p "$BUILD_DIR/usr/share/agent"
 mkdir -p "$BUILD_DIR/etc/systemd/system"
 mkdir -p "$BUILD_DIR/etc/agent"
-cp .env "$BUILD_DIR/etc/agent/.env"
+mkdir -p "$BUILD_DIR/etc/skel/.config/autostart"
 
+echo "📄 Copio .env..."
+cp .env "$BUILD_DIR/etc/agent/.env"
 
 echo "🔨 Compilo il binario principale (agent-client)..."
 cargo build --release
 
 echo "📦 Copio binari..."
 cp target/release/agent-client "$BUILD_DIR/usr/local/bin/"
-
-# Usa il binario precompilato della tray da output/
-#if [ ! -f output/agent-tray ]; then
-#  echo "❌ ERRORE: agent-tray non trovato in output/. Compilalo con build.tray-icon.sh prima di eseguire questo script."
-#  exit 1
-#fi
-#cp output/agent-tray "$BUILD_DIR/usr/local/bin/"
-#cp tray-icon/target/release/agent-tray "$BUILD_DIR/usr/local/bin/"
-cp ./tray-icon/target/release/agent-tray "$BUILD_DIR/usr/local/bin/"
-
-
+cp tray-icon/target/release/agent-tray "$BUILD_DIR/usr/local/bin/"
 
 echo "🎨 Copio icone..."
 cp icons/icon-cyber-green.png "$BUILD_DIR/usr/share/icons/hicolor/48x48/apps/"
@@ -41,7 +34,12 @@ cp icons/icon-cyber-red.png "$BUILD_DIR/usr/share/icons/hicolor/48x48/apps/"
 
 echo "⚙️ Copio file systemd..."
 cp debian/agent_client.service "$BUILD_DIR/etc/systemd/system/"
-cp debian/agent_tray.service "$BUILD_DIR/etc/systemd/system/"
+
+echo "🖥️ Copio file .desktop in /etc/skel/.config/autostart/..."
+cp debian/agent-tray.desktop "$BUILD_DIR/etc/skel/.config/autostart/"
+
+echo "🖥️ Copio anche in /usr/share/agent per il postinst..."
+cp debian/agent-tray.desktop "$BUILD_DIR/usr/share/agent/"
 
 echo "📝 Scrivo DEBIAN/control..."
 cat > "$BUILD_DIR/DEBIAN/control" <<EOF
@@ -66,10 +64,20 @@ systemctl daemon-reload
 systemctl enable agent_client.service
 systemctl start agent_client.service || true
 
-systemctl enable agent_tray.service
-systemctl start agent_tray.service || true
-
 gtk-update-icon-cache /usr/share/icons/hicolor || true
+
+# 💡 AUTOSTART agent-tray per l'utente attivo
+GUI_USER=$(who | grep '(:0)' | head -n1 | awk '{print $1}')
+USER_HOME=$(eval echo "~$GUI_USER")
+
+if [ -n "$GUI_USER" ] && [ -d "$USER_HOME" ]; then
+  echo "📎 Copio agent-tray.desktop per l'utente: $GUI_USER"
+  mkdir -p "$USER_HOME/.config/autostart"
+  cp /usr/share/agent/agent-tray.desktop "$USER_HOME/.config/autostart/"
+  chown "$GUI_USER:$GUI_USER" "$USER_HOME/.config/autostart/agent-tray.desktop"
+else
+  echo "⚠️ Nessun utente grafico attivo trovato"
+fi
 EOF
 
 chmod +x "$BUILD_DIR/DEBIAN/postinst"
@@ -77,5 +85,4 @@ chmod +x "$BUILD_DIR/DEBIAN/postinst"
 echo "📦 Creo pacchetto .deb..."
 dpkg-deb --build "$BUILD_DIR" "output/${NAME}_${VERSION}_${ARCH}.deb"
 
-
-echo "✅ Fatto! Pacchetto creato: ${BUILD_DIR}.deb"
+echo "✅ Fatto! Pacchetto creato: output/${NAME}_${VERSION}_${ARCH}.deb"
